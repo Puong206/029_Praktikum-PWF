@@ -23,19 +23,16 @@ class ProductPolicy
         return true;
     }
 
-
     public function update(User $user, Product $product): bool
     {
         return $user->id === $product->user_id || $user->role === 'admin';
     }
-
 
     public function delete(User $user, Product $product): bool
     {
         return $user->id === $product->user_id || $user->role === 'admin';
     }
 
-    
     public function restore(User $user, Product $product): bool
     {
         return $user->role === 'admin';
