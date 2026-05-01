@@ -15,9 +15,6 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('about')" :active="request()->routeIs('about')">
-                        {{ __('About') }}
-                    </x-nav-link>
                 </div>
                 @can('view-product')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
@@ -33,6 +30,11 @@
                     </x-nav-link>
                 </div>
                 @endcan
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('about')" :active="request()->routeIs('about')">
+                        {{ __('About') }}
+                    </x-nav-link>
+                </div>
             </div>
 
             <!-- Settings Dropdown -->
@@ -103,10 +105,10 @@
             <x-responsive-nav-link :href="route('category.index')" :active="request()->routeIs('category.*')">
                 {{ __('Category') }}
             </x-responsive-nav-link>
+            @endcan
             <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')">
                 {{ __('About') }}
             </x-responsive-nav-link>
-            @endcan
         </div>
 
         <!-- Responsive Settings Options -->
