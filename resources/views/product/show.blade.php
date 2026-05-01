@@ -21,11 +21,22 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Price</label>
                         <p class="mt-1 text-lg">{{ $product->price }}</p>
                     </div>
-                    <div class="mb-4">
+                    <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Owner</label>
                         <p class="mt-1 text-lg">{{ $product->user->name ?? 'Unknown' }}</p>
                     </div>
-                    <a href="{{ route('product.index') }}" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 font-semibold">Back to List</a>
+
+                    <div class="flex items-center gap-3">
+                        <a href="{{ route('product.index') }}"
+                            class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 font-semibold">
+                            &larr; Back to List
+                        </a>
+
+                        @can('manage-product')
+                            <x-edit-product :url="route('product.edit', $product)" />
+                            <x-delete-product :url="route('product.destroy', $product)" />
+                        @endcan
+                    </div>
                 </div>
             </div>
         </div>
