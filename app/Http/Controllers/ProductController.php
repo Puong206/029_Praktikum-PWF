@@ -21,6 +21,7 @@ class ProductController extends Controller
 
     public function create()
     {
+        Gate::authorize('manage-product');
         $categories = Category::all();
         return view('product.create', compact('categories'));
     }
@@ -66,6 +67,7 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
+        Gate::authorize('manage-product');
         $categories = Category::all();
         return view('product.edit', compact('product', 'categories'));
     }
@@ -109,11 +111,11 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        Gate::authorize('delete', $product);
+        Gate::authorize('manage-product');
         $product->delete();
 
         return redirect()
             ->route('product.index')
-            ->with('success', 'Product deleted successfully.');
+            ->with('success', 'Product berhasil dihapus!');
     }
 }
