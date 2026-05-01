@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -19,11 +25,34 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        $data = $request->validated();
-        $data['user_id'] = Auth::id();
-        Product::create($data);
+        $validated = $request->validated();
+        $validated['user_id'] = Auth::id();
 
-        return redirect()->route('product.index')->with('success', 'Product created successfully.');
+        try {
+            Product::create($validated);
+
+            return redirect()
+                ->route('product.index')
+                ->with('success', 'Product created successfully.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Product store database error', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Database error while creating product.');
+        } catch (\Throwable $e) {
+            Log::error('Product store unexpected error', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Unexpected error occurred.');
+        }
     }
 
     public function show(Product $product)
@@ -38,17 +67,44 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, Product $product)
     {
-        \Illuminate\Support\Facades\Gate::authorize('update', $product);
-        $product->update($request->validated());
+        Gate::authorize('update', $product);
 
-        return redirect()->route('product.index')->with('success', 'Product updated successfully.');
+        $validated = $request->validated();
+
+        try {
+            $product->update($validated);
+
+            return redirect()
+                ->route('product.index')
+                ->with('success', 'Product updated successfully.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Product update database error', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Database error while updating product.');
+        } catch (\Throwable $e) {
+            Log::error('Product update unexpected error', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Unexpected error occurred.');
+        }
     }
 
     public function destroy(Product $product)
     {
-        \Illuminate\Support\Facades\Gate::authorize('delete', $product);
+        Gate::authorize('delete', $product);
         $product->delete();
 
-        return redirect()->route('product.index')->with('success', 'Product deleted successfully.');
+        return redirect()
+            ->route('product.index')
+            ->with('success', 'Product deleted successfully.');
     }
 }
