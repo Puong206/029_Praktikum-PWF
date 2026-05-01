@@ -94,9 +94,6 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')">
-                {{ __('About') }}
-            </x-responsive-nav-link>
             @can('view-product')
             <x-responsive-nav-link :href="route('product.index')" :active="request()->routeIs('product.*')">
                 {{ __('Product') }}
@@ -105,6 +102,9 @@
             @can('manage-category')
             <x-responsive-nav-link :href="route('category.index')" :active="request()->routeIs('category.*')">
                 {{ __('Category') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')">
+                {{ __('About') }}
             </x-responsive-nav-link>
             @endcan
         </div>
