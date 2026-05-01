@@ -3,16 +3,25 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
-    protected $fillable = ['user_id', 'name', 'qty', 'price'];
+    protected $fillable = ['user_id', 'category_id', 'name', 'qty', 'price'];
 
-    public function user() {
+    /**
+     * Get the user that owns the product.
+     */
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function kategoris() {
-        return $this->hasMany(Kategori::class);
+    /**
+     * Get the category that owns the product.
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 }

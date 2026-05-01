@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,26 +15,29 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with('user')->get();
+        $products = Product::with('user', 'category')->get();
         return view('product.index', compact('products'));
     }
 
     public function create()
     {
-        return view('product.create');
+        $categories = Category::all();
+        return view('product.create', compact('categories'));
     }
 
     public function store(StoreProductRequest $request)
     {
         $validated = $request->validated();
         $validated['user_id'] = Auth::id();
+        $validated['qty'] = $validated['quantity'];
+        unset($validated['quantity']);
 
         try {
             Product::create($validated);
 
             return redirect()
                 ->route('product.index')
-                ->with('success', 'Product created successfully.');
+                ->with('success', 'Product berhasil ditambahkan!');
         } catch (\Illuminate\Database\QueryException $e) {
             Log::error('Product store database error', [
                 'message' => $e->getMessage(),
@@ -62,7 +66,8 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        return view('product.edit', compact('product'));
+        $categories = Category::all();
+        return view('product.edit', compact('product', 'categories'));
     }
 
     public function update(UpdateProductRequest $request, Product $product)
@@ -70,13 +75,17 @@ class ProductController extends Controller
         Gate::authorize('update', $product);
 
         $validated = $request->validated();
+        if (isset($validated['quantity'])) {
+            $validated['qty'] = $validated['quantity'];
+            unset($validated['quantity']);
+        }
 
         try {
             $product->update($validated);
 
             return redirect()
                 ->route('product.index')
-                ->with('success', 'Product updated successfully.');
+                ->with('success', 'Product berhasil diperbarui!');
         } catch (\Illuminate\Database\QueryException $e) {
             Log::error('Product update database error', [
                 'message' => $e->getMessage(),

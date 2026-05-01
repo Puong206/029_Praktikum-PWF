@@ -30,6 +30,14 @@ class AppServiceProvider extends ServiceProvider
             return $user->role === 'admin';
         });
 
+        Gate::define('manage-category', function(User $user) {
+            return $user->role === 'admin';
+        });
+
+        Gate::define('view-category', function(User $user) {
+            return true; // All authenticated users can view categories
+        });
+
         /**
          * Configure Scramble API Documentation
          */
